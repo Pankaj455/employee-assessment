@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useState, useContext } from "react";
 import axios from "axios";
 
 const EmployeeContext = createContext();
@@ -11,20 +11,17 @@ function DataProvider({ children }) {
   const [employees, setEmployees] = useState([]);
   const [page, setPage] = useState(0);
 
-  useEffect(() => {
-    fetchData();
-    const currentPage = JSON.parse(sessionStorage.getItem("page"));
-    currentPage
-      ? setPage(currentPage)
-      : JSON.stringify(sessionStorage.setItem("page", 0));
-  }, []);
+  const fetchEmployees = async () => {
+    const employeesData = await fetchData();
+    setEmployees(employeesData);
+  };
 
   const fetchData = async () => {
     try {
       const res = await axios.get(
         "https://opensheet.elk.sh/1gH5Kle-styszcHF2G0H8l1w1nDt1RhO9NHNCpHhKK0M/employees"
       );
-      setEmployees(res.data);
+      return res.data;
     } catch (err) {
       console.log(`Error ${err}`);
     }
@@ -32,7 +29,14 @@ function DataProvider({ children }) {
 
   return (
     <EmployeeContext.Provider
-      value={{ employees, setEmployees, page, setPage }}
+      value={{
+        employees,
+        setEmployees,
+        page,
+        setPage,
+        fetchData,
+        fetchEmployees,
+      }}
     >
       {children}
     </EmployeeContext.Provider>

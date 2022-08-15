@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -74,8 +74,18 @@ import { useEmployeeContext } from '../context/DataProvider';
 
 
 function EmployeesTable() {
-    const {employees, page, setPage} = useEmployeeContext()
+    const {employees, page, setPage, fetchEmployees} = useEmployeeContext()
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetchEmployees();
+        setLoading(false)
+        const currentPage = JSON.parse(sessionStorage.getItem("page"));
+        currentPage
+          ? setPage(currentPage)
+          : JSON.stringify(sessionStorage.setItem("page", 0));
+      }, []);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -90,7 +100,7 @@ function EmployeesTable() {
   return (
     <>
         {
-            employees.length !== 0 ?
+            !loading ?
             <>
                 <TableHeader />
                 <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
@@ -106,8 +116,29 @@ function EmployeesTable() {
                     </TableHead>
                     <TableBody>
                         {
+                            employees.length > 1 ? 
                             employees
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            .map((employee) => (
+                                <StyledTableRow
+                                    key={employee.id}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                {
+                                    columns.map((column) => {
+                                        const value = employee[column.id]
+                                        return <StyledTableCell key={column.id}>
+                                                {
+                                                    column.id === 'id' 
+                                                    ? <Link to={`/details/${employee.first_name}`} state={{employee}}>{value}</Link>
+                                                    : value
+                                                }
+                                            </StyledTableCell>
+                                    })
+                                }
+                                </StyledTableRow>
+                            )) :
+                            employees
                             .map((employee) => (
                                 <StyledTableRow
                                     key={employee.id}
@@ -136,7 +167,7 @@ function EmployeesTable() {
                 component="div"
                 count={employees.length}
                 rowsPerPage={rowsPerPage}
-                page={page}
+                page={employees.length > 1 ? page : 0}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
             /> 
