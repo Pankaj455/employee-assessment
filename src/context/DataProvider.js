@@ -9,7 +9,6 @@ export function useEmployeeContext() {
 
 function DataProvider({ children }) {
   const [employees, setEmployees] = useState([]);
-  const [page, setPage] = useState(0);
 
   const fetchEmployees = async () => {
     const employeesData = await fetchData();
@@ -32,8 +31,6 @@ function DataProvider({ children }) {
       value={{
         employees,
         setEmployees,
-        page,
-        setPage,
         fetchData,
         fetchEmployees,
       }}

@@ -74,8 +74,9 @@ import { useEmployeeContext } from '../context/DataProvider';
 
 
 function EmployeesTable() {
-    const {employees, page, setPage, fetchEmployees} = useEmployeeContext()
+    const {employees, fetchEmployees} = useEmployeeContext()
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [page, setPage] = useState(0);
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {

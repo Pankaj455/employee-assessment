@@ -11,9 +11,13 @@
 
 .table-header{
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   margin: 1em;
+}
+
+.table-header a{
+  margin-right: 10px;
 }
 
 .App-header {
@@ -42,3 +46,8 @@ a{
   align-items: center;
   gap: 1em;
 }
+
+.hierarchy {
+  max-width: 600px;
+}
+
